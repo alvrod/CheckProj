@@ -29,6 +29,11 @@ module InstructionParser =
         | Pattern of string
         | Absolute
 
+    type EvaluationStatus =
+        | New
+        | Allowed
+        | Rejected
+
     type RuleInstruction = {
         Type: RuleType;
         ProjectPattern: string option;
@@ -36,6 +41,7 @@ module InstructionParser =
         IncludePattern: IncludeType option;
         PathPattern: PathType option;
         Comment: string;
+        Status: EvaluationStatus
     }
 
     type IncludeInstruction = {
@@ -90,7 +96,8 @@ module InstructionParser =
                 if pattern.IsSome then Some (PathType.Pattern(pattern.Value))
                 else if (input.Contains "absolute") then Some PathType.Absolute
                 else None
-            Comment = comment
+            Comment = comment;
+            Status = New
         }               
 
     let ParseLine line: Instruction option =

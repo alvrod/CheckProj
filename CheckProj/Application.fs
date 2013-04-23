@@ -3,6 +3,7 @@
 open CheckProj.Arguments;
 open CheckProj.Project;
 open CheckProj.InstructionParser;
+open CheckProj.Interpreter;
 open System;
 open System.IO;
 open System.Linq;
@@ -25,19 +26,11 @@ module Application =
          let argsMap = (parsedArgs :> seq<_>) |> Seq.map (|KeyValue|) |> Map.ofSeq
          
          // find & parse instructions
-         ParseFile argsMap.["rules"] 
-         |> Seq.filter (fun i -> i.IsSome) 
-         |> Seq.iter (fun i -> printfn "found %A" i) 
+         let instructions = 
+            ParseFile argsMap.["rules"] 
+            |> Seq.filter (fun i -> i.IsSome) 
+            |> Seq.map (fun i -> i.Value)
 
-         // find & stream projects to check
-         let (projects, where) = Project.EnumerateProjects (argsMap.TryFind "src", "*.fsproj")
-         if not (projects.Any()) then printfn "no projects found, please specify a root path with -src and a pattern with -proj"
-         else printfn "found projects under %s" where
-
-         // stream references
-         // determine rules to apply (configured rules, might depend on project and/or reference)
-
-         // validate references, printing all errors
-         // return number of errors (0 = success)
-         0
-
+         Interpreter.Interpret (instructions, argsMap.TryFind "src")
+         
+         
