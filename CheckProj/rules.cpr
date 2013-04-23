@@ -1,0 +1,20 @@
+check [*.*proj]
+
+# general
+reject any absolute # affects all projects
+reject any path [bin\*] # not recursive under bin
+allow project [*.RequestTranslator] path [**\lib_extras\**] # recursive above or under lib_extras
+reject any path [**\lib_extras\**] # previous rule takes precedence
+reject any include [*.RequestTranslator]
+
+# web app
+reject project [PS.{module}.*] under [**\client] path [**\lib\{module}\**] # match {module} in project <-> path
+reject any under [**\client] include [*.Domain.dll] # y analogas con Services, RequestTranslator, DataAccessLayer
+
+# server
+reject any include [Oracle.DataAccess.dll]
+allow project [*.DataAccessLayer] under [**\server] include [Oracle.DataAccess.dll]
+reject project [*.Interface] include [*.Domain.dll] # y analogas con Services, DataAccessLayer
+
+# includes
+include [..\lib\some\morerules.prc]
