@@ -49,7 +49,7 @@ You need to write a rules file, such as:
    allow any path [..\\lib\\\*]  
    reject any under [..\\client] include [\*.Domain.dll] # Clients shouldn't reference business logic  
 
-   # include another file with more rules
+   # include another file with more rules  
    include [..\\lib\\some\\morerules.prc]  
 
 ---
