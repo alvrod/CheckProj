@@ -1,6 +1,7 @@
 ﻿namespace CheckProj
 
 open System;
+open System.Linq;
 
 module Program =
 
@@ -12,5 +13,6 @@ module Program =
             with | :? ArgumentException as ex -> printfn "Error: %s" (ex.Message); 2;
 
         printfn "result: %i" result
+
         Console.ReadLine() |> ignore
         result // return an integer exit code

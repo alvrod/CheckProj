@@ -19,6 +19,7 @@ module Interpreter =
                 for r in p.References do
                 yield r
             }
+
     let ApplyRule (rule:RuleInstruction, reference:Reference) =
         printfn "applying rule"        
 
@@ -26,17 +27,16 @@ module Interpreter =
         let referenceQueue = new Queue<Reference>()
         let instructionQueue = new Queue<Instruction>(collection = instructions)
         while instructionQueue.Any() do
-            let instruction = instructionQueue.Dequeue
-            match instruction() with
+            match instructionQueue.Dequeue() with
             | Check(check) ->
                 Seq.iter (fun ref -> referenceQueue.Enqueue ref) (EnumerateReferences srcPath check.Pattern)
             | Rule(rule) ->
                 query {
                     for reference in referenceQueue do
                     select (ApplyRule (rule, reference))
-                } |> ignore
+                } |> Seq.iter (fun _ -> ())
             | Include(inc) ->
                 printfn "hola"
-
         0
+
 
