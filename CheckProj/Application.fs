@@ -32,5 +32,7 @@ module Application =
             |> Seq.map (fun i -> i.Value)
 
          Interpreter.Interpret (instructions, argsMap.TryFind "src")
-         
-         
+         |> Seq.filter (fun r -> r.Result = EvaluationResult.Rejected) 
+         |> Seq.map (fun r -> printf "%s" r.AppliedRule.Comment)
+         |> Seq.length
+        
