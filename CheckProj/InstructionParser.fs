@@ -28,6 +28,7 @@ module InstructionParser =
     type PathType =
         | Pattern of string
         | Absolute
+        | Empty
 
     type RuleInstruction = {
         Type: RuleType;
@@ -56,19 +57,25 @@ module InstructionParser =
     let ParsePattern text =
         // capture pattern out of [pattern]. Sadly [] must be escaped hence the ugliness
         let capture = Regex.Match(text, PatternRegex)
-        if not capture.Success then raise (ArgumentException(String.Format("Unable to find proper pattern in {0}. Patterns must be [pattern].", text)))
-        capture.Groups.["p"].Value
+        if not capture.Success then None
+        else Some capture.Groups.["p"].Value
 
-    let ParseCheck text = { CheckInstruction.Pattern = ParsePattern text }
-
-    let ParseInclude text = { IncludeInstruction.Pattern = ParsePattern text }
-
+    let ParseCheck text =
+        let pattern = ParsePattern text 
+        if pattern.IsSome then { CheckInstruction.Pattern = (ParsePattern text).Value }
+        else raise (ArgumentException("Pattern not found after check"))
+    
+    let ParseInclude text = 
+        let pattern = ParsePattern text 
+        if pattern.IsSome then { IncludeInstruction.Pattern = (ParsePattern text).Value }
+        else raise (ArgumentException("Pattern not found after include"))
+    
     let ParseRule (ruleType:RuleType, text:string) =
         let GetPattern (text:string, name:string) =
             let pos = text.IndexOf name
             match pos with
             | -1 -> None
-            | x -> Some (ParsePattern (text.Substring (x + name.Length)))
+            | x -> ParsePattern (text.Substring (x + name.Length))
 
         let (input, comment) = 
             let pos = text.IndexOf '#'
@@ -89,6 +96,7 @@ module InstructionParser =
                 let pattern = GetPattern (input, "path")
                 if pattern.IsSome then Some (PathType.Pattern(pattern.Value))
                 else if (input.Contains "absolute") then Some PathType.Absolute
+                else if (input.Contains "empty") then Some PathType.Empty
                 else None
             Comment = comment;
         }               

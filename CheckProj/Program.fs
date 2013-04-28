@@ -10,7 +10,7 @@ module Program =
         let result = 
             try
                 Application.Run argv
-            with | :? ArgumentException as ex -> printfn "Error: %s" (ex.Message); 2;
+            with | :? ArgumentException as ex -> printfn "Error: %s" (ex.ToString()); 2;
 
         printfn "result: %i" result
 

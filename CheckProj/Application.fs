@@ -9,7 +9,6 @@ open System.IO;
 open System.Linq;
 
 module Application = 
-
     let Run args =
         
          // Define what arguments are expected
@@ -33,6 +32,6 @@ module Application =
 
          Interpreter.Interpret (instructions, argsMap.TryFind "src")
          |> Seq.filter (fun r -> r.Result = EvaluationResult.Rejected) 
-         |> Seq.map (fun r -> printf "%s" r.AppliedRule.Comment)
+         |> Seq.map (fun r -> printfn "Rejected %A because: %s" r.EvaluatedReference r.AppliedRule.Comment)
          |> Seq.length
         

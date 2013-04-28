@@ -1,7 +1,7 @@
 check [*.*proj]
 
 # general
-reject any absolute # affects all projects
+reject any path absolute # Do not include absolute paths, EVER
 reject any path [bin\*] # not recursive under bin
 allow project [*.RequestTranslator] path [**\lib_extras\**] # recursive above or under lib_extras
 reject any path [**\lib_extras\**] # previous rule takes precedence
@@ -17,4 +17,4 @@ allow project [*.DataAccessLayer] under [**\server] include [Oracle.DataAccess.d
 reject project [*.Interface] include [*.Domain.dll] # y analogas con Services, DataAccessLayer
 
 # includes
-include [..\lib\some\morerules.prc]
+# include [..\lib\some\morerules.prc]
